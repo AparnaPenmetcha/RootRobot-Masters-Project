@@ -292,10 +292,7 @@ def root_callback(msg):
     global manager
     """Callback for pub subscriber"""
     rospy.loginfo(' I heard %s', msg.data)
-    #requests.post(url,msg.data)
-    #manager = BluetoothDeviceManager(adapter_name = 'hci0')
-    #manager.start_d#    thread = threading.Thread(target = manager.run)
-    # thread.start()
+    
     if msg.data == "red":
         manager.robot.set_colour(1,255,0,0)
     if msg.data == "green":
@@ -324,7 +321,7 @@ def main():
     rate = rospy.Rate(0.1)
     msg = String()
     
-    rospy.spin()    # Run until stopped - not using this since we uare also publishing as well
+    rospy.spin()    # Run until stopped 
 
 
 
@@ -332,11 +329,7 @@ if __name__ == '__main__':
     try:
         manager = BluetoothDeviceManager(adapter_name = 'hci0')
         main()
-    #manager = BluetoothDeviceManager(adapter_name = 'hci0')
-    #manager.start_discovery(service_uuids=[root_identifier_uuid])
-    #thread = threading.Thread(target = manager.run)
-    #thread.start()
-   ###### CHRIS THINKS I SHOULD BE PUTTING ALL OF THIS BLUETOOTH DEVICE MANAGER STUFF HERE #########
+    
     finally:
         #This is the place to put any "clean up" code that should be executed
         #on shutdown even in case of errors, e.g., closing files or windows
