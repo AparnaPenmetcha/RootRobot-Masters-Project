@@ -307,21 +307,21 @@ def main():
     manager.start_discovery(service_uuids=[root_identifier_uuid])
     thread = threading.Thread(target = manager.run)
     thread.start()
-    rospy.init_node('rootPi', anonymous=True) 
-    rospy.Subscriber('toRoot', String, root_callback)
-    pub = rospy.Publisher('fromRoot', String, queue_size=10)
+    #rospy.init_node('rootPi', anonymous=True) 
+    #rospy.Subscriber('toRoot', String, root_callback)
+    #pub = rospy.Publisher('fromRoot', String, queue_size=10)
 
 
     manager.robot.getBatteryLevel()
     msg = String()
     msg.data = "Battery Level: {}".format(sensorReading['batteryLevel'])
-    pub.publish(msg)
+    #pub.publish(msg)
 
     
-    rate = rospy.Rate(0.1)
-    msg = String()
+    #rate = rospy.Rate(0.1)
+    #msg = String()
     
-    rospy.spin()    # Run until stopped 
+    #rospy.spin()    # Run until stopped 
 
 
 
