@@ -80,7 +80,7 @@ class RootDevice(gatt.Device):
         mtype = ""
         for byte in value:
             message.append(byte)
-#        print ("Messages from Root:")
+        print ("Messages from Root:")
         if message[0] == 4:  mtype = "Color Sensor"
         if message[0] == 12: mtype = "Bumper"
         if message[0] == 13: mtype = "Light Sensor"
