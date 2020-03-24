@@ -312,10 +312,11 @@ def main():
     #rospy.Subscriber('toRoot', String, root_callback)
     #pub = rospy.Publisher('fromRoot', String, queue_size=10)
 
-
+    print("Getting battery level - main") 
     manager.robot.getBatteryLevel()
     msg = String()
     msg.data = "Battery Level: {}".format(sensorReading['batteryLevel'])
+    print msg 
     #pub.publish(msg)
 
     
