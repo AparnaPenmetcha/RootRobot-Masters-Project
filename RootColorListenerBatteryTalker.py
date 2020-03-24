@@ -162,8 +162,9 @@ class RootDevice(gatt.Device):
         time.sleep(2)
 
     def getBatteryLevel():
+        print ("Getting battery level")   
         self.tx_characteristic.write_value([0x0E, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0])
-        time.sleep(2)
+        
 
 def secondsSince(startTime: datetime.datetime):
     return (datetime.datetime.now() - startTime).total_seconds()
