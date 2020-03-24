@@ -80,7 +80,7 @@ class RootDevice(gatt.Device):
         mtype = ""
         for byte in value:
             message.append(byte)
-        print ("Messages from Root:")
+        #print ("Messages from Root:")
         if message[0] == 4:  mtype = "Color Sensor"
         if message[0] == 12: mtype = "Bumper"
         if message[0] == 13: mtype = "Light Sensor"
@@ -308,22 +308,22 @@ def main():
     manager.start_discovery(service_uuids=[root_identifier_uuid])
     thread = threading.Thread(target = manager.run)
     thread.start()
-    #rospy.init_node('rootPi', anonymous=True) 
-    #rospy.Subscriber('toRoot', String, root_callback)
-    #pub = rospy.Publisher('fromRoot', String, queue_size=10)
+    rospy.init_node('rootPi', anonymous=True) 
+    rospy.Subscriber('toRoot', String, root_callback)
+    pub = rospy.Publisher('fromRoot', String, queue_size=10)
 
     print("Getting battery level - main") 
     manager.robot.getBatteryLevel()
     msg = String()
     msg.data = "Battery Level: {}".format(sensorReading['batteryLevel'])
     print(msg) 
-    #pub.publish(msg)
+    pub.publish(msg)
 
     
-    #rate = rospy.Rate(0.1)
-    #msg = String()
+    rate = rospy.Rate(0.1)
+    msg = String()
     
-    #rospy.spin()    # Run until stopped 
+    rospy.spin()    # Run until stopped 
 
 
 
