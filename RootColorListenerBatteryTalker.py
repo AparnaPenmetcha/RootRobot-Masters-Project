@@ -316,7 +316,7 @@ def main():
     manager.robot.getBatteryLevel()
     msg = String()
     msg.data = "Battery Level: {}".format(sensorReading['batteryLevel'])
-    print msg 
+    print(msg) 
     #pub.publish(msg)
 
     
