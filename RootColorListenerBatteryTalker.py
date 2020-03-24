@@ -330,6 +330,7 @@ def main():
 if __name__ == '__main__':
     try:
         manager = BluetoothDeviceManager(adapter_name = 'hci0')
+        print("main") 
         main()
     
     finally:
