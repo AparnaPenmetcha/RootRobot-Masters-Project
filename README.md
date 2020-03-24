@@ -10,5 +10,7 @@ Run the RootColourListenerBatteryTalker.py in for one raspberry pi, and the Root
 
 
 
+Everything Root Robot related -> https://github.com/RootRobotics/root-robot-ble-protocol
+
 
 
