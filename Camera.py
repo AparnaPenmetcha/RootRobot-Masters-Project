@@ -36,7 +36,7 @@ def getOLocation(im):
             gray = cv2.medianBlur(gray, 5)
 
             rows = gray.shape[0]
-            detected_circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT, 1, rows / 8,
+            detected_circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, rows / 8,
                                       param1=100, param2=30,
                                       minRadius=1, maxRadius=3000)
 
