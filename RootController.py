@@ -13,6 +13,7 @@ class RootController:
         rospy.init_node('rootPi', anonymous=True)
         rospy.Subscriber('toRoot', String, self.root_callback)
         self.pub = rospy.Publisher('fromRoot', String, queue_size=10)
+        rospy.spin()
     
     def sendRequest(self, message):
         

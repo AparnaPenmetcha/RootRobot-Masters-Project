@@ -30,10 +30,12 @@ def main():
     #Prepare publisher on the 'sendRoot' topic
     pub = rospy.Publisher('toRoot', String, queue_size=10)
     rospy.Subscriber('fromRoot', String, root_callback)   # Use the 'sendRoot' topic
+
+    rospy.spin()
     # msg = String()
     # rate = rospy.Rate(1)  #update rate in Hz
     # command=['red','green','blue']
-
+    
 
 if __name__ == '__main__':
     main()
