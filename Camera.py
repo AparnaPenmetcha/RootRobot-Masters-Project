@@ -45,7 +45,7 @@ def getOLocation(im):
                 locations.append(n)
 
             n = n + 1
-
+    print(locations)
     return locations
 
 class Camera:
