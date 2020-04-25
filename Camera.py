@@ -27,7 +27,7 @@ class Camera:
         rate = rospy.Rate(1)  # update rate in Hz
         if message == 'received':
             n = 0
-            print("Sending: %s".format(msg.data))
+            rospy.loginfo("Sending: %s", msg.data)
             while not rospy.is_shutdown():
                 msg.data = message
                 self.pub.publish(msg)
@@ -35,7 +35,7 @@ class Camera:
                 if n>100:
                     return
         else:
-            print("Sending: %s".format(msg.data))
+            rospy.loginfo("Sending: %s", msg.data)
             while not rospy.is_shutdown():
                 msg.data = message
                 self.pub.publish(msg)
@@ -49,13 +49,14 @@ class Camera:
         if msg.data == 'received':
             self.received = True
         elif msg.data == 'getOs':
+            rospy.loginfo("Received: %s", msg.data)
             self.sendRequest('received')
             # self.camera.start_preview()
             # time.sleep(5)
             self.camera.capture('/home/pi/Desktop/testExample.jpg')
             # self.camera.stop_preview()
         else:
-            print("Received: %s".format(msg.data))
+            rospy.loginfo("Received: %s", msg.data)
 
 
 
