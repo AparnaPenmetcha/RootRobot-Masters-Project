@@ -74,7 +74,7 @@ class Camera:
                 self.pub.publish(msg)
                 rate.sleep()
                 n = n+1
-                if n>100:
+                if n>10:
                     return
         else:
             print("Sending: " + message)
@@ -97,7 +97,7 @@ class Camera:
             self.sendRequest('received')
             # self.camera.start_preview()
             # time.sleep(5)
-            self.camera.capture('/home/pi/Desktop/new.jpg')
+            self.camera.capture('new.jpg')
             # self.camera.stop_preview()
 
             x = 85
@@ -105,10 +105,10 @@ class Camera:
             h = 1000
             w = 1000
 
-            im1 = cv2.imread(r'/home/pi/Desktop/old.jpg')
+            im1 = cv2.imread(r'old.jpg')
             im1 = im1[y:y + h, x:x + w]
             im1 = cv2.resize(im1, (600, 600))
-            im2 = cv2.imread(r'/home/pi/Desktop/new.jpg')
+            im2 = cv2.imread(r'new.jpg')
             im2 = im2[y:y + h, x:x + w]
             im2 = cv2.resize(im2, (600, 600))
 
