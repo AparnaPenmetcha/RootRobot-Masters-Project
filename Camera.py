@@ -121,9 +121,9 @@ class Camera:
                     print('{} is a new location'.format(loc))
                     newLocation = loc
 
-            # if newLocation > -1:
-            #     cv2.imwrite('/home/pi/Desktop/old.jpg', im2)
-
+            if newLocation > -1:
+                cv2.imwrite('/home/pi/Desktop/old.jpg', im2)
+                self.sendRequest(str(newLocation))
 
         else:
             print("Received: " + msg.data)
