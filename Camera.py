@@ -16,6 +16,7 @@ time.sleep(0.1)
 
 def root_callback(msg):
 
+    print('checkpoint5')
 
     camera.start_preview()
     print('preview starting')
@@ -25,13 +26,19 @@ def root_callback(msg):
 
 def main():
     """Node setup and main ROS loop"""
+    print('checkpoint1')
     rospy.init_node('RootTest', anonymous='True')
+    print('checkpoint2')
 
     #Prepare publisher on the 'sendRoot' topic
     pub = rospy.Publisher('toRoot', String, queue_size=10)
     rospy.Subscriber('fromRoot', String, root_callback)   # Use the 'sendRoot' topic
+    print('checkpoint3')
 
     rospy.spin()
+
+    print('checkpoint4')
+
     # msg = String()
     # rate = rospy.Rate(1)  #update rate in Hz
     # command=['red','green','blue']

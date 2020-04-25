@@ -13,25 +13,31 @@ class RootController:
         rospy.init_node('rootPi', anonymous=True)
         rospy.Subscriber('toRoot', String, self.root_callback)
         self.pub = rospy.Publisher('fromRoot', String, queue_size=10)
+        print('checkpoint2')
         rospy.spin()
+        print('checkpoint3')
     
     def sendRequest(self, message):
-        
+        print('checkpoint5')
         messageString = String()
         messageString.data = message
-    
+        print('checkpoint6')
+
         rospy.loginfo('Sending to Camera: %s', messageString.data)
         self.pub.publish(messageString)
-        
+        print('checkpoint7')
+
     def root_callback(self,msg):
         rospy.loginfo('I heard %s.', msg.data)
 
 
 if __name__ == '__main__':
- 
-    rootController = RootController()
-    rootController.sendRequest('')
 
+    print('checkpoint1')
+    rootController = RootController()
+    print('checkpoint4')
+    rootController.sendRequest('')
+    print('checkpoint8')
 
         
         
