@@ -27,6 +27,7 @@ class RootController:
                 # print(message)
                 msg.data = message
                 self.pub.publish(msg)
+                rate.sleep()
                 n = n + 1
                 if n > 100:
                     return
@@ -36,6 +37,7 @@ class RootController:
                 # print(message)
                 msg.data = message
                 self.pub.publish(msg)
+                rate.sleep()
                 if self.received:
                     self.received = False
                     return

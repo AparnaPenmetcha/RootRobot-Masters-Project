@@ -32,6 +32,7 @@ class Camera:
                 msg.data = message
                 # print(message)
                 self.pub.publish(msg)
+                rate.sleep()
                 n = n+1
                 if n>100:
                     return
@@ -41,6 +42,7 @@ class Camera:
                 msg.data = message
                 # print(message)
                 self.pub.publish(msg)
+                rate.sleep()
                 if self.received:
                     self.received = False
                     return
