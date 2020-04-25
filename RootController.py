@@ -22,16 +22,18 @@ class RootController:
         rate = rospy.Rate(1)  # update rate in Hz
         if message == 'received':
             n = 0
-            print("Sending: " + msg.data)
+            print("Sending: " + message)
             while not rospy.is_shutdown():
+                print(message)
                 msg.data = message
                 self.pub.publish(msg)
                 n = n + 1
                 if n > 100:
                     return
         else:
-            print("Sending: " + msg.data)
+            print("Sending: " + message)
             while not rospy.is_shutdown():
+                print(message)
                 msg.data = message
                 self.pub.publish(msg)
                 if self.received:

@@ -27,17 +27,19 @@ class Camera:
         rate = rospy.Rate(1)  # update rate in Hz
         if message == 'received':
             n = 0
-            print("Sending: " + msg.data)
+            print("Sending: " + message)
             while not rospy.is_shutdown():
                 msg.data = message
+                print(message)
                 self.pub.publish(msg)
                 n = n+1
                 if n>100:
                     return
         else:
-            print("Sending: " + msg.data)
+            print("Sending: " + message)
             while not rospy.is_shutdown():
                 msg.data = message
+                print(message)
                 self.pub.publish(msg)
                 if self.received:
                     self.received = False
@@ -45,7 +47,7 @@ class Camera:
 
 
     def root_callback(self, msg):
-
+        print(msg.data)
         if msg.data == 'received':
             self.received = True
         elif msg.data == 'getOs':
