@@ -36,8 +36,8 @@ class RootController:
         print('checkpoint7')
 
 
-def root_callback(self,msg):
-        rospy.loginfo('I heard %s.', msg.data)
+    def root_callback(self,msg):
+            rospy.loginfo('I heard %s.', msg.data)
 
 
 if __name__ == '__main__':
