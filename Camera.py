@@ -3,22 +3,37 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
+import rospy
+from std_msgs.msg import String
+
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
 #rawCapture = PiRGBArray(camera)
 # allow the camera to warmup
 time.sleep(0.1)
-camera.start_preview() 
-print('preview starting')
-time.sleep(5) 
-camera.capture('/home/pi/Desktop/shaiv.jpg')
-camera.stop_preview()
-# grab an image from the camera
-#camera.capture(rawCapture, format="bgr")
-#image = rawCapture.array
-# display the image on screen and wait for a keypress
-#cv2.imwrite(r'/home/pi/Desktop/sample.jpg', image)
-#cv2.imshow("Image", image)
-#cv2.waitKey(0)
 
 
+
+def root_callback(msg):
+
+
+    camera.start_preview()
+    print('preview starting')
+    time.sleep(5)
+    camera.capture('/home/pi/Desktop/testExample.jpg')
+    camera.stop_preview()
+
+def main():
+    """Node setup and main ROS loop"""
+    rospy.init_node('RootTest', anonymous='True')
+
+    #Prepare publisher on the 'sendRoot' topic
+    pub = rospy.Publisher('toRoot', String, queue_size=10)
+    rospy.Subscriber('fromRoot', String, root_callback)   # Use the 'sendRoot' topic
+    # msg = String()
+    # rate = rospy.Rate(1)  #update rate in Hz
+    # command=['red','green','blue']
+
+
+if __name__ == '__main__':
+    main()
