@@ -19,10 +19,10 @@ def root_callback(msg):
     print('checkpoint5')
 
     camera.start_preview()
-    print('preview starting')
-    time.sleep(5)
-    camera.capture('/home/pi/Desktop/testExample.jpg')
-    camera.stop_preview()
+    print(msg.data)
+    # time.sleep(5)
+    # camera.capture('/home/pi/Desktop/testExample.jpg')
+    # camera.stop_preview()
 
 def main():
     """Node setup and main ROS loop"""
