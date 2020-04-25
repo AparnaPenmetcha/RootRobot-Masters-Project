@@ -32,6 +32,7 @@ class RootController:
                 msg.data = cmd
                 rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), cmd))
                 self.pub.publish(msg)
+                return
         # self.pub.publish(messageString)
         print('checkpoint7')
 

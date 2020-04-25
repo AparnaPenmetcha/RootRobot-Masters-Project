@@ -18,7 +18,7 @@ def root_callback(msg):
 
     print('checkpoint5')
 
-    camera.start_preview()
+    # camera.start_preview()
     print(msg.data)
     # time.sleep(5)
     # camera.capture('/home/pi/Desktop/testExample.jpg')
