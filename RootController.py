@@ -31,10 +31,10 @@ class RootController:
         while not rospy.is_shutdown():
             for cmd in command:
                 msg.data = str(n) + ':' +cmd
-                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), cmd))
+                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), msg.data))
                 self.pub.publish(msg)
                 n = n + 1
-                if n > 100:
+                if n > 50:
                     return
         # self.pub.publish(messageString)
         print('checkpoint7')

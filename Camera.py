@@ -16,7 +16,7 @@ time.sleep(0.1)
 
 def root_callback(msg):
 
-    print('checkpoint5')
+    # print('checkpoint5')
 
     # camera.start_preview()
     print(msg.data)
