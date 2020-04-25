@@ -14,7 +14,7 @@ class RootController:
         rospy.Subscriber('toRoot', String, self.root_callback)
         self.pub = rospy.Publisher('fromRoot', String, queue_size=10)
         print('checkpoint2')
-        rospy.spin()
+
         print('checkpoint3')
     
     def sendRequest(self, message):
@@ -39,6 +39,6 @@ if __name__ == '__main__':
     rootController.sendRequest('')
     print('checkpoint8')
 
-        
+    rospy.spin()
         
     
