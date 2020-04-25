@@ -22,17 +22,17 @@ class RootController:
         rate = rospy.Rate(1)  # update rate in Hz
         if message == 'received':
             n = 0
+            print("Sending: %s".format(msg.data))
             while not rospy.is_shutdown():
                 msg.data = message
-                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), message))
                 self.pub.publish(msg)
                 n = n + 1
                 if n > 100:
                     return
         else:
+            print("Sending: %s".format(msg.data))
             while not rospy.is_shutdown():
                 msg.data = message
-                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), message))
                 self.pub.publish(msg)
                 if self.received:
                     self.received = False
@@ -42,13 +42,9 @@ class RootController:
         if msg.data == 'received':
             self.received = True
         else:
-            # print('checkpoint5')
+            print("Received: %s".format(msg.data))
             self.sendRequest('received')
-            # camera.start_preview()
-            print(msg.data)
-            # time.sleep(5)
-            # camera.capture('/home/pi/Desktop/testExample.jpg')
-            # camera.stop_preview()
+
 
 if __name__ == '__main__':
 
