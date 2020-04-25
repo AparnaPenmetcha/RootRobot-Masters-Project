@@ -23,16 +23,10 @@ class RootController:
         messageString.data = message
         print('checkpoint6')
 
-        # rospy.loginfo('Sending to Camera: %s', messageString.data)
-        msg = String()
+        rospy.loginfo('Sending to Camera: %s', messageString.data)
         rate = rospy.Rate(1)  # update rate in Hz
-        command = ['red', 'green', 'blue']
-        while not rospy.is_shutdown():
-            for cmd in command:
-                msg.data = cmd
-                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), cmd))
-                self.pub.publish(msg)
-        # self.pub.publish(messageString)
+
+        self.pub.publish(messageString)
         print('checkpoint7')
 
     def root_callback(self,msg):
@@ -44,7 +38,7 @@ if __name__ == '__main__':
     print('checkpoint1')
     rootController = RootController()
     print('checkpoint4')
-    rootController.sendRequest('')
+    rootController.sendRequest('getOs')
     print('checkpoint8')
 
     rospy.spin()
