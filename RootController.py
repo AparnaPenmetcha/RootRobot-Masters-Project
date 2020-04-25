@@ -24,7 +24,7 @@ class RootController:
             n = 0
             print("Sending: " + message)
             while not rospy.is_shutdown():
-                print(message)
+                # print(message)
                 msg.data = message
                 self.pub.publish(msg)
                 n = n + 1
@@ -33,7 +33,7 @@ class RootController:
         else:
             print("Sending: " + message)
             while not rospy.is_shutdown():
-                print(message)
+                # print(message)
                 msg.data = message
                 self.pub.publish(msg)
                 if self.received:
