@@ -66,4 +66,6 @@ class Camera:
 
 if __name__ == '__main__':
     camera = Camera()
+    location = 3
+    camera.sendRequest(str(location))
     rospy.spin()

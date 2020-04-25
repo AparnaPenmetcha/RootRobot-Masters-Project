@@ -53,7 +53,7 @@ class RootController:
 if __name__ == '__main__':
 
     rootController = RootController()
-    rootController.sendRequest('getOs')
+    # rootController.sendRequest('getOs')
     
 
     rospy.spin()
