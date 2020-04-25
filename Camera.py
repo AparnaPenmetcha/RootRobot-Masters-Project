@@ -50,10 +50,10 @@ class Camera:
             self.received = True
         elif msg.data == 'getOs':
             self.sendRequest('received')
-            self.camera.start_preview()
-            time.sleep(5)
+            # self.camera.start_preview()
+            # time.sleep(5)
             self.camera.capture('/home/pi/Desktop/testExample.jpg')
-            self.camera.stop_preview()
+            # self.camera.stop_preview()
         else:
             print("Received: %s".format(msg.data))
 
