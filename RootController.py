@@ -27,20 +27,16 @@ class RootController:
         msg = String()
         rate = rospy.Rate(1)  # update rate in Hz
         command = ['red', 'green', 'blue']
-        n = 0
         while not rospy.is_shutdown():
             for cmd in command:
                 msg.data = cmd
                 rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), cmd))
                 self.pub.publish(msg)
-                n = n + 1
-                if n == 20:
-                    return
         # self.pub.publish(messageString)
-
         print('checkpoint7')
 
-    def root_callback(self,msg):
+
+def root_callback(self,msg):
         rospy.loginfo('I heard %s.', msg.data)
 
 
