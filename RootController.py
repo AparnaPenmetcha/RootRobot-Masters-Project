@@ -240,6 +240,117 @@ class RootController:
             self.sendRequest('received')
 
 
+def secondsSince(startTime: datetime.datetime):
+    return (datetime.datetime.now() - startTime).total_seconds()
+
+def drive_root(command):
+    angle = 0
+    if command == "4":
+        print("Draw a square")
+        # prompt user to enter seconds until a proper number is entered...
+        duration = None
+        while duration is None:
+            duration = input('How big do you want your square to be? Tell me in mm :)')
+            try:
+                duration = int(duration)
+            except:
+                # user input invalid number. clear duration and ask again
+                duration = None
+                print('Invalid number please try again')
+
+        # print(f'Driving forward for {duration} seconds...')
+        print('Duration: ' + str(duration))
+        startTime = datetime.datetime.now()
+        print(startTime)
+        manager.robot.pen_down()
+        manager.robot.drive_distance(duration)
+        manager.robot.rotate_right(90)
+        manager.robot.drive_distance(duration)
+        manager.robot.rotate_right(90)
+        manager.robot.drive_distance(duration)
+        manager.robot.rotate_right(90)
+        manager.robot.drive_distance(duration)
+        manager.robot.rotate_right(90)
+        manager.robot.stop()
+
+        print('Stop Complete')
+
+    if command == "s":
+        print("Drive backwards")
+        # prompt user to enter seconds until a proper number is entered...
+        duration = None
+        while duration is None:
+            duration = input('For how many seconds?')
+            try:
+                duration = float(duration)
+            except:
+                # user input invalid number. clear duration and ask again
+                duration = None
+                print('Invalid number please try again')
+
+        # print(f'Driving backward for {duration} seconds...')
+        startTime = datetime.datetime.now()
+        while secondsSince(startTime) < duration:
+            manager.robot.drive_backwards()
+
+    if command == "d":
+        print("Drive right")
+        # prompt user to enter seconds until a proper number is entered...
+        duration = None
+        while duration is None:
+            duration = input('For how many seconds?')
+            try:
+                duration = float(duration)
+            except:
+                # user input invalid number. clear duration and ask again
+                duration = None
+                print('Invalid number please try again')
+
+        # print(f'Driving right for {duration} seconds...')
+        startTime = datetime.datetime.now()
+        while secondsSince(startTime) < duration:
+            manager.robot.drive_right()
+
+    if command == "a":
+        print("Drive left")
+        # prompt user to enter seconds until a proper number is entered...
+        duration = None
+        while duration is None:
+            duration = input('For how many seconds?')
+            try:
+                duration = float(duration)
+            except:
+                # user input invalid number. clear duration and ask again
+                duration = None
+                print('Invalid number please try again')
+
+        # print(f'Driving left for {duration} seconds...')
+        startTime = datetime.datetime.now()
+        while secondsSince(startTime) < duration:
+            manager.robot.drive_left()
+
+    if command == " ":
+        print("Stop")
+        manager.robot.stop()
+
+    if command == "o":
+        print("Pen up")
+        manager.robot.pen_up()
+    if command == "l":
+        print("Pen down")
+        manager.robot.pen_down()
+    if command == "t":
+        print("Enter turn rate (up to +-90):")
+        char = input()
+        rate = int(char)
+        print("Turning ", rate)
+        manager.robot.turn_rate(rate)
+    if command == "p":
+        print("Steer")
+        manager.robot.steer(30, 40)
+    if command == "c":
+        print("What colour? Red, green or blue")
+
 if __name__ == '__main__':
 
     rootController = RootController()
@@ -249,8 +360,12 @@ if __name__ == '__main__':
     thread = threading.Thread(target=manager.run)
     thread.start()
 
-    manager.robot.drive_distance(200)
+    while manager.robot is None:
+        pass
+    time.sleep(5)
 
+    c = input('Type a command.')
+    drive_root(c)
     # rospy.spin()
         
     
