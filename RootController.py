@@ -404,7 +404,9 @@ if __name__ == '__main__':
     thread.start()
 
     while manager.robot is None:
-        pass
+        print('Robot not assigned. Waiting to complete connection.')
+        time.sleep(1)
+    print('Robot assigned and connected')
     time.sleep(10)
 
     x = int(input('Type a x-coor.'))
