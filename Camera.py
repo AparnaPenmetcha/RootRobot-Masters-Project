@@ -6,6 +6,8 @@ import cv2
 import rospy
 from std_msgs.msg import String
 
+camera = None
+
 def getOLocation(im):
 
     locations = []
@@ -54,8 +56,7 @@ class Camera:
         rospy.init_node('RootTest', anonymous='True')
 
         # Prepare publisher on the 'sendRoot' topic
-        self.pub = rospy.Publisher('toRoot', String, queue_size=10)
-        rospy.Subscriber('fromRoot', String, self.root_callback)
+
         self.received = False
         self.camera = PiCamera()
 
@@ -90,55 +91,62 @@ class Camera:
                     return
 
 
-    def root_callback(self, msg):
-        # print(msg.data)
-        if msg.data == 'received':
-            self.received = True
-        elif msg.data == 'newGame':
-            print("Received: " + msg.data)
-            self.sendRequest('received')
-            self.camera.capture('old.jpg')
+def root_callback(msg):
+    # print(msg.data)
+    if msg.data == 'received':
+        camera.received = True
+    elif msg.data == 'newGame':
+        print("Received: " + msg.data)
+        camera.sendRequest('received')
+        camera.camera.capture('old.jpg')
 
-        elif msg.data == 'getOs':
-            print("Received: " + msg.data)
-            self.sendRequest('received')
-            # self.camera.start_preview()
-            # time.sleep(5)
-            self.camera.capture('new.jpg')
-            # self.camera.stop_preview()
+    elif msg.data == 'getOs':
+        print("Received: " + msg.data)
+        camera.sendRequest('received')
+        # self.camera.start_preview()
+        # time.sleep(5)
+        camera.camera.capture('new.jpg')
+        # self.camera.stop_preview()
 
-            x = 85
-            y = 0
-            h = 1000
-            w = 1000
+        newLocation = input('Type new O.')
+        if newLocation is None or newLocation == '':
+            camera.sendRequest(newLocation)
+            return
 
-            im1 = cv2.imread(r'old.jpg')
-            im1 = im1[y:y + h, x:x + w]
-            im1 = cv2.resize(im1, (600, 600))
-            im2 = cv2.imread(r'new.jpg')
-            im2 = im2[y:y + h, x:x + w]
-            im2 = cv2.resize(im2, (600, 600))
+        x = 85
+        y = 0
+        h = 1000
+        w = 1000
 
-            oldLocations = getOLocation(im1)
-            newLocations = getOLocation(im2)
+        im1 = cv2.imread(r'old.jpg')
+        im1 = im1[y:y + h, x:x + w]
+        im1 = cv2.resize(im1, (600, 600))
+        im2 = cv2.imread(r'new.jpg')
+        im2 = im2[y:y + h, x:x + w]
+        im2 = cv2.resize(im2, (600, 600))
 
-            newLocation = -1
-            for loc in newLocations:
-                if loc not in oldLocations:
-                    print('{} is a new location'.format(loc))
-                    newLocation = loc
+        oldLocations = getOLocation(im1)
+        newLocations = getOLocation(im2)
 
-            if newLocation > -1:
-                cv2.imwrite('/home/pi/Desktop/old.jpg', im2)
-                self.sendRequest(str(newLocation))
+        newLocation = -1
+        for loc in newLocations:
+            if loc not in oldLocations:
+                print('{} is a new location'.format(loc))
+                newLocation = loc
 
-        else:
-            print("Received: " + msg.data)
+        if newLocation > -1:
+            cv2.imwrite('/home/pi/Desktop/old.jpg', im2)
+            camera.sendRequest(str(newLocation))
+
+    else:
+        print("Received: " + msg.data)
 
 
 
 if __name__ == '__main__':
     camera = Camera()
+    pub = rospy.Publisher('toRoot', String, queue_size=10)
+    rospy.Subscriber('fromRoot', String, root_callback)
     # location = 3
     # camera.sendRequest(str(location))
     rospy.spin()

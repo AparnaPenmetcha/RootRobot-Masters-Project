@@ -34,6 +34,8 @@ sensorReading = {
 }
 
 robotTouched = False
+robotWaitingForTouch = False
+rootController = None
 
 class BluetoothDeviceManager(gatt.DeviceManager):
     robot = None  # root robot device
@@ -295,13 +297,11 @@ class RootDevice(gatt.Device):
 class RootController:
 
     def __init__(self):
-        rospy.init_node('rootPi', anonymous=True)
-        rospy.Subscriber('toRoot', String, self.root_callback)
-        self.pub = rospy.Publisher('fromRoot', String, queue_size=10)
+
         self.received = False
         self.lastOLocation = -1
 
-    def sendRequest(self, message):
+    def sendRequest(self, pub, message):
 
         # rospy.loginfo('Sending to Camera: %s', messageString.data)
         msg = String()
@@ -312,7 +312,7 @@ class RootController:
             while not rospy.is_shutdown():
                 # print(message)
                 msg.data = message
-                self.pub.publish(msg)
+                pub.publish(msg)
                 rate.sleep()
                 n = n + 1
                 if n > 100:
@@ -322,24 +322,24 @@ class RootController:
             n = 0
             while not rospy.is_shutdown():
                 msg.data = message
-                self.pub.publish(msg)
+                pub.publish(msg)
                 rate.sleep()
                 n = n + 1
                 if self.received or n > 60:
                     self.received = False
                     return
 
-    def root_callback(self, msg):
-        if msg.data == 'received':
-            self.received = True
-        else:
-            try:
-                self.lastOLocation = int(msg.data)
-                print("Received Last O Location: " + msg.data)
-                self.sendRequest('received')
-            except:
-                print("Received: " + msg.data)
-                self.sendRequest('received')
+def root_callback(msg):
+    if msg.data == 'received':
+        rootController.received = True
+    else:
+        try:
+            rootController.lastOLocation = int(msg.data)
+            print("Received Last O Location: " + msg.data)
+            rootController.sendRequest('received')
+        except:
+            print("Received: " + msg.data)
+            rootController.sendRequest('received')
 
 
 
@@ -503,6 +503,9 @@ class Board:
 
 if __name__ == '__main__':
 
+    rospy.init_node('rootPi', anonymous=True)
+    rospy.Subscriber('toRoot', String, root_callback)
+    pub = rospy.Publisher('fromRoot', String, queue_size=10)
     rootController = RootController()
     manager = BluetoothDeviceManager(adapter_name = 'hci0')
     manager.start_discovery(service_uuids=[root_identifier_uuid])
@@ -543,7 +546,7 @@ if __name__ == '__main__':
     # currentX, currentY = manager.robot.goHome(currentX, currentY)
     # rospy.spin()
 
-    rootController.sendRequest('newGame')
+    rootController.sendRequest(pub, 'newGame')
     while board.turns < 9 and board.checkWin() == 'N':
 
         while not robotTouched:
@@ -557,6 +560,7 @@ if __name__ == '__main__':
 
         while lastOLocation == rootController.lastOLocation:
             time.sleep(1)
+
 
         board.addO(rootController.lastOLocation)
 
