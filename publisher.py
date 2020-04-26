@@ -2,6 +2,8 @@
 # license removed for brevity
 import rospy
 from std_msgs.msg import String
+import json
+
 
 def talker():
     pub = rospy.Publisher('chatter', String, queue_size=10)

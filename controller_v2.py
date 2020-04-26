@@ -1,38 +1,18 @@
-# !/usr/bin/env python3
-# https://github.com/zlite/PyRoot/blob/master/drive-root.py
-
-import gatt
-import threading
-import time, termios, tty, sys
-import datetime
 import rospy
-from std_msgs.msg import String
-import numpy as np
-import random
 import json
+from std_msgs.msg import String
+import random
+from picamera import PiCamera
+import time
+import cv2
+import threading
+import gatt
 
-instructions = """---------------------
- KEY         COMMAND
----------------------
- w           Forward
- s           Backward
- a           Left
- d           Right
- space       Stop
- t           Turn
- o           Pen Up
- l           Pen Down
- q           Quit
- c           Colour"""
-
-# BLE UUID's
 root_identifier_uuid = '48c5d828-ac2a-442d-97a3-0c9822b04979'
 uart_service_uuid = '6e400001-b5a3-f393-e0a9-e50e24dcca9e'
 tx_characteristic_uuid = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'  # Write
 rx_characteristic_uuid = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'  # Notify
 
-robotTouched = False
-robotWaitingForTouch = False
 
 class BluetoothDeviceManager(gatt.DeviceManager):
     robot = None  # root robot device
@@ -42,7 +22,6 @@ class BluetoothDeviceManager(gatt.DeviceManager):
         self.stop_discovery()  # Stop searching
         self.robot = RootDevice(mac_address=device.mac_address, manager=self)
         self.robot.connect()
-
 
 class RootDevice(gatt.Device):
 
@@ -91,7 +70,8 @@ class RootDevice(gatt.Device):
         # if message[0] == 13: mtype = "Light Sensor"
         if message[0] == 17:
             mtype = "Touch Sensor"
-            robotTouched = True
+            if waitingForRobotTouch:
+                robotTouched = True
         # if message[0] == 20: mtype = "Cliff Sensor"
         # if message[0] == 14:
         #     mtype = "Battery Level"
@@ -466,26 +446,94 @@ class Board:
 
         return board
 
+# initiate variables
+rospy.init_node('controller', anonymous=True)
+pub = rospy.Publisher('fromRoot', String, queue_size=10)
+board = Board()
+
+manager = BluetoothDeviceManager(adapter_name = 'hci0')
+manager.start_discovery(service_uuids=[root_identifier_uuid])
+managerThread = threading.Thread(target=manager.run)
+managerThread.start()
+
+waitingForRobotTouch = False
+robotTouched = False
+
+currentX = -1
+currentY = -1
+
+while manager.robot is None:
+    print('Robot not assigned. Waiting to complete connection.')
+    time.sleep(1)
+
+print('Robot assigned and connected')
+time.sleep(10)
+
+
+def getOLocation(im):
+
+    locations = []
+
+    imgwidth=im.shape[0]
+    imgheight=im.shape[1]
+
+
+    y1 = 0
+    M = imgwidth//3
+    N = imgheight//3
+
+
+    n = 0
+    for x in range(0,imgwidth,M):
+        for y in range(0, imgheight, N):
+            x1 = x + M
+            y1 = y + N
+            tiles = im[x:x+M,y:y+N]
+
+            cv2.rectangle(im, (x, y), (x1, y1), (0, 255, 0))
+            # cv2.imwrite(r'/Users/shaivpatel/Desktop/Apoopoo/tictactoe/after/' +str(x)+ str(y)+"SAMPLE.png",tiles)
+
+            # Read image.
+
+            gray = cv2.cvtColor(tiles, cv2.COLOR_BGR2GRAY)
+
+            gray = cv2.medianBlur(gray, 5)
+
+            rows = gray.shape[0]
+            detected_circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, rows / 8,
+                                      param1=100, param2=30,
+                                      minRadius=1, maxRadius=3000)
+
+            # Draw circles that are detected.
+            if detected_circles is not None:
+                locations.append(n)
+
+            n = n + 1
+    print(locations)
+    return locations
+
+def callback(data):
+    if 'type' in data.data:
+        dic = json.loads(data.data)
+        messageType = dic['type']
+        messageData = dic['data']
+        if messageType == 'board':
+            board = Board.fromJSON(messageData)
+            print('New Board from Camera:')
+            board.printBoard()
+
+
+
+def listener():
+    rospy.Subscriber("toRoot", String, callback)
+
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
+
+
 if __name__ == '__main__':
-
-
-    manager = BluetoothDeviceManager(adapter_name = 'hci0')
-    manager.start_discovery(service_uuids=[root_identifier_uuid])
-    thread = threading.Thread(target=manager.run)
-    thread.start()
-
-    currentX = -1
-    currentY = -1
-
-    board = Board()
-
-
-    while manager.robot is None:
-        print('Robot not assigned. Waiting to complete connection.')
-        time.sleep(1)
-
-    print('Robot assigned and connected')
-    time.sleep(10)
+    listenerThread = threading.Thread(target=listener)
+    listenerThread.start()
 
 
     oLocations = input('Type in locations of Os')
@@ -504,23 +552,31 @@ if __name__ == '__main__':
 
     board.printBoard()
 
-    rootController.sendRequest(pub, 'newGame')
-    while board.turns < 9 and board.checkWin() == 'N':
+    # inform camera a new game has started
+    message = {
+        'type': 'newGame',
+        'data': board.toJSON()
+    }
+    pub.publish(json.dumps(message))
 
+    while board.checkWin() == 'N' and board.turns < 9:
+
+        # wait for robot touch to proceed with robot's turn
+        waitingForRobotTouch = True
         while not robotTouched:
             time.sleep(1)
 
+        print('Robot was tapped. running robots turn.' )
+        waitingForRobotTouch = False
         robotTouched = False
-        print("User touched robot sensor. Requesting O location from camera...")
-        rootController.sendRequest('getOs')
 
-        lastOLocation = rootController.lastOLocation
+        # ask camera for update
 
-        while lastOLocation == rootController.lastOLocation:
+        currentTurns = board.turns
+        while board.turns == currentTurns:
             time.sleep(1)
 
-
-        board.addO(rootController.lastOLocation)
+        print('New board received from camera.')
 
         if board.checkWin() != 'N':
             break
@@ -565,4 +621,5 @@ if __name__ == '__main__':
         manager.robot.congratulate()
     elif board.checkWin() == 'X':
         manager.robot.celebrate()
+
 

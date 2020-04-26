@@ -7,6 +7,21 @@ import rospy
 from std_msgs.msg import String
 
 camera = None
+pub = None
+board = None
+
+class Board:
+    def __init__(self):
+        self.board = ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']
+        self.turns = 0
+
+    def addX(self, position):
+        self.board[position] = 'X'
+        self.turns = self.turns + 1
+    def addO(self, position):
+        self.board[position] = 'O'
+        self.turns = self.turns + 1
+
 
 def getOLocation(im):
 
@@ -61,7 +76,7 @@ class Camera:
         self.camera = PiCamera()
 
 
-    def sendRequest(self, message):
+    def sendRequest(self, pub, message):
 
         # rospy.loginfo('Sending to Camera: %s', messageString.data)
         msg = String()
@@ -72,7 +87,7 @@ class Camera:
             while not rospy.is_shutdown():
                 msg.data = message
                 # print(message)
-                self.pub.publish(msg)
+                pub.publish(msg)
                 rate.sleep()
                 n = n+1
                 if n>10:
@@ -83,7 +98,7 @@ class Camera:
             while not rospy.is_shutdown():
                 msg.data = message
                 rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), message))
-                self.pub.publish(msg)
+                pub.publish(msg)
                 rate.sleep()
                 n = n+1
                 if self.received or n > 60:
