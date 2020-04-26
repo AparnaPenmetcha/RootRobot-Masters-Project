@@ -80,7 +80,7 @@ class Camera:
             print("Sending: " + message)
             while not rospy.is_shutdown():
                 msg.data = message
-                # print(message)
+                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(), rospy.get_time(), message))
                 self.pub.publish(msg)
                 rate.sleep()
                 if self.received:

@@ -87,16 +87,16 @@ class RootDevice(gatt.Device):
         for byte in value:
             message.append(byte)
         print("Messages from Root:")
-        if message[0] == 4:  mtype = "Color Sensor"
-        if message[0] == 12: mtype = "Bumper"
-        if message[0] == 13: mtype = "Light Sensor"
+        # if message[0] == 4:  mtype = "Color Sensor"
+        # if message[0] == 12: mtype = "Bumper"
+        # if message[0] == 13: mtype = "Light Sensor"
         if message[0] == 17:
             mtype = "Touch Sensor"
             robotTouched = True
-        if message[0] == 20: mtype = "Cliff Sensor"
-        if message[0] == 14:
-            mtype = "Battery Level"
-            sensorReading['batteryLevel'] = message[9]
+        # if message[0] == 20: mtype = "Cliff Sensor"
+        # if message[0] == 14:
+        #     mtype = "Battery Level"
+        #     sensorReading['batteryLevel'] = message[9]
 
         print(mtype, message)
 
@@ -317,7 +317,7 @@ class RootController:
         else:
             print("Sending: " + message)
             while not rospy.is_shutdown():
-                # print(message)
+                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(),rospy.get_time(),message))
                 msg.data = message
                 self.pub.publish(msg)
                 rate.sleep()
