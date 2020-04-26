@@ -244,6 +244,26 @@ class RootDevice(gatt.Device):
 
         return currentX, currentY
 
+    def drawX(self):
+
+        self.rotate_right(45)
+        self.drive_distance(50)
+        self.rotate_right(180)
+        self.pen_down()
+        self.drive_distance(100)
+        self.pen_up()
+        self.rotate_right(180)
+        self.drive_distance(50)
+        self.rotate_right(90)
+        self.drive_distance(50)
+        self.rotate_right(180)
+        self.pen_down()
+        self.drive_distance(100)
+        self.pen_up()
+        self.rotate_right(180)
+        self.drive_distance(50)
+        self.rotate_right(225)
+
 class RootController:
     
     def __init__(self):
@@ -288,6 +308,8 @@ class RootController:
 
 
 
+
+
 if __name__ == '__main__':
 
     rootController = RootController()
@@ -309,6 +331,8 @@ if __name__ == '__main__':
     x = int(input('Type a x-coor.'))
     y = int(input('Type a y-coor.'))
     currentX, currentY = manager.robot.goToSquare(x,y,currentX, currentY)
+    time.sleep(2)
+    manager.robot.drawX()
     time.sleep(10)
     currentX, currentY = manager.robot.goHome(currentX, currentY)
     # rospy.spin()
