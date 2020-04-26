@@ -151,7 +151,7 @@ class RootDevice(gatt.Device):
         self.tx_characteristic.write_value(
             [0x01, 0x0C, 0x00, angleBytes[0], angleBytes[1], angleBytes[2], angleBytes[3], 0x00, 0x00,
              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-        time.sleep(2)
+        time.sleep(5)
 
     def set_colour(self, mode, red, green, blue):
         modeBytes = mode.to_bytes(1, byteorder='big', signed=False)
@@ -167,7 +167,7 @@ class RootDevice(gatt.Device):
         self.tx_characteristic.write_value(
             [0x01, 0x08, 0x00, distBytes[0], distBytes[1], distBytes[2], distBytes[3], 0x00, 0x00,
              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-        time.sleep(2)
+        time.sleep(5)
 
     def turn_rate(self, rate):
         left = 0
