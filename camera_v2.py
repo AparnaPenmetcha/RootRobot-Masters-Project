@@ -262,6 +262,12 @@ def callback(data):
 
 
             newLocation = -1
+            newLoc = input('Type new O.')
+            if newLoc != '':
+                newLocation = input(newLoc)
+                board.addO(newLocation)
+
+
             while newLocation == -1:
 
                 im2 = cv2.imread(r'new.jpg')
