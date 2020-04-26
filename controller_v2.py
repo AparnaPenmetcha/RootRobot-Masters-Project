@@ -571,6 +571,11 @@ if __name__ == '__main__':
         robotTouched = False
 
         # ask camera for update
+        message = {
+            'type': 'update',
+            'data': board.toJSON()
+        }
+        pub.publish(json.dumps(message))
 
         currentTurns = board.turns
         while board.turns == currentTurns:
