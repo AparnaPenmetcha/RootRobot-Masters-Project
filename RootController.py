@@ -33,7 +33,7 @@ sensorReading = {
     'batteryLevel': None
 }
 
-robotTouched = FalseS
+robotTouched = False
 
 class BluetoothDeviceManager(gatt.DeviceManager):
     robot = None  # root robot device
