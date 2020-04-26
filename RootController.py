@@ -526,14 +526,21 @@ if __name__ == '__main__':
     time.sleep(10)
 
 
-    oLocations = input('Type in locations of Os').split(',')
-    xLocations = input('Type in locations of Xs').split(',')
-    for oLoc in oLocations:
-        loc = int(oLoc)
-        board.addO(loc)
-    for xLoc in xLocations:
-        loc = int(xLoc)
-        board.addX(loc)
+    oLocations = input('Type in locations of Os')
+    xLocations = input('Type in locations of Xs')
+
+    if oLocations is not None and oLocations != '':
+        oLocations = oLocations.split(',')
+        for oLoc in oLocations:
+            loc = int(oLoc)
+            board.addO(loc)
+    if xLocations is not None and xLocations != '':
+        xLocations = xLocations.split(',')
+        for xLoc in xLocations:
+            loc = int(xLoc)
+            board.addO(loc)
+            
+
 
     board.printBoard()
 
