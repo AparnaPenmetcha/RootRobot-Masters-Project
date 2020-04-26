@@ -4,7 +4,6 @@ from std_msgs.msg import String
 import random
 from picamera import PiCamera
 import time
-import cv2
 import threading
 import gatt
 
