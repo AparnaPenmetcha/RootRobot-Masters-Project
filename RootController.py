@@ -238,6 +238,8 @@ class RootDevice(gatt.Device):
             self.drive_distance((currentY + 1) * 200)
             currentX = -1
             currentY = -1
+            time.sleep(5)
+
             self.rotate_right(180)
 
         return currentX, currentY
