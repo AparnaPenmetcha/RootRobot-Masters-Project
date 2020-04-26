@@ -362,7 +362,7 @@ if __name__ == '__main__':
 
     while manager.robot is None:
         pass
-    time.sleep(5)
+    time.sleep(10)
 
     c = int(input('Type a distance.'))
     manager.robot.drive_distance(c)
