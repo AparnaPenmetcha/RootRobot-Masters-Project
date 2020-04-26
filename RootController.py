@@ -1,10 +1,3 @@
-import gatt
-import threading
-import time,termios,tty,sys
-import datetime
-import rospy
-from std_msgs.msg import String
-import requests
 # !/usr/bin/env python3
 # https://github.com/zlite/PyRoot/blob/master/drive-root.py
 
@@ -14,7 +7,7 @@ import time, termios, tty, sys
 import datetime
 import rospy
 from std_msgs.msg import String
-import requests
+import numpy as np
 
 instructions = """---------------------
  KEY         COMMAND
@@ -39,6 +32,7 @@ sensorReading = {
     'batteryLevel': None
 }
 
+robotTouched = False
 
 class BluetoothDeviceManager(gatt.DeviceManager):
     robot = None  # root robot device
@@ -85,7 +79,7 @@ class RootDevice(gatt.Device):
         self.rx_characteristic.enable_notifications()  # listen to RX messages
 
     def characteristic_value_updated(self, characteristic, value):
-        global batteryLevel
+        global robotTouched
 
         message = []
         mtype = ""
@@ -95,7 +89,9 @@ class RootDevice(gatt.Device):
         if message[0] == 4:  mtype = "Color Sensor"
         if message[0] == 12: mtype = "Bumper"
         if message[0] == 13: mtype = "Light Sensor"
-        if message[0] == 17: mtype = "Touch Sensor"
+        if message[0] == 17:
+            mtype = "Touch Sensor"
+            robotTouched = True
         if message[0] == 20: mtype = "Cliff Sensor"
         if message[0] == 14:
             mtype = "Battery Level"
@@ -198,7 +194,7 @@ class RootDevice(gatt.Device):
         self.tx_characteristic.write_value(
             [0x0E, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
              0x00, 0x0])
-    
+
     def goToSquare(self, x, y, currentX, currentY):
         if x > 2 or x < 0 or y > 2 or y < 0:
             return
@@ -265,7 +261,7 @@ class RootDevice(gatt.Device):
         self.rotate_right(225)
 
 class RootController:
-    
+
     def __init__(self):
         rospy.init_node('rootPi', anonymous=True)
         rospy.Subscriber('toRoot', String, self.root_callback)
@@ -306,35 +302,189 @@ class RootController:
             print("Received: " + msg.data)
             self.sendRequest('received')
 
+class Board:
+    def __init__(self):
+        self.board = ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']
+
+    def addX(self, position):
+        self.board[position] = 'X'
+    def addO(self, position):
+        self.board[position] = 'O'
 
 
+    def checkWin(self):
+        normalizedBoard = []
+        for i in range(len(self.board)):
+            if self.board[i] == 'N':
+                normalizedBoard.append(0)
+            if self.board[i] == 'O':
+                normalizedBoard.append(1)
+            if self.board[i] == 'X':
+                normalizedBoard.append(-1)
 
+        topRow    =    [0, 1, 2]
+        midRow    =    [3, 4, 5]
+        botRow    =    [6, 7, 8]
+        leftCol   =    [0, 3, 6]
+        midCol    =    [1, 4, 7]
+        rightCol  =    [2, 5, 8]
+        majorDiag =    [0, 4, 8]
+        minorDiag =    [6, 4, 2]
+
+        groups = [
+            topRow,
+            midRow,
+            botRow,
+            leftCol,
+            midCol,
+            rightCol,
+            majorDiag,
+            minorDiag
+        ]
+
+        for group in groups:
+            sum = 0
+            for cell in group:
+                sum = sum + normalizedBoard[cell]
+
+            if sum == 3:
+                return 'O'
+            if sum == -3:
+                return 'X'
+
+        return 'N'
+
+    def checkNextTurnWinforX(self):
+        normalizedBoard = []
+        for i in range(len(self.board)):
+            if self.board[i] == 'N':
+                normalizedBoard.append(0)
+            if self.board[i] == 'O':
+                normalizedBoard.append(1)
+            if self.board[i] == 'X':
+                normalizedBoard.append(-1)
+
+        topRow    =    [0, 1, 2]
+        midRow    =    [3, 4, 5]
+        botRow    =    [6, 7, 8]
+        leftCol   =    [0, 3, 6]
+        midCol    =    [1, 4, 7]
+        rightCol  =    [2, 5, 8]
+        majorDiag =    [0, 4, 8]
+        minorDiag =    [6, 4, 2]
+
+        groups = [
+            topRow,
+            midRow,
+            botRow,
+            leftCol,
+            midCol,
+            rightCol,
+            majorDiag,
+            minorDiag
+        ]
+
+        for group in groups:
+            sum = 0
+            for cell in group:
+                sum = sum + normalizedBoard[cell]
+
+            if sum == -2:
+                for cell in group:
+                    if normalizedBoard[cell] == 0:
+                        return cell
+
+        return -1
+
+    def checkNextTurnWinforO(self):
+        normalizedBoard = []
+        for i in range(len(self.board)):
+            if self.board[i] == 'N':
+                normalizedBoard.append(0)
+            if self.board[i] == 'O':
+                normalizedBoard.append(1)
+            if self.board[i] == 'X':
+                normalizedBoard.append(-1)
+
+        topRow    =    [0, 1, 2]
+        midRow    =    [3, 4, 5]
+        botRow    =    [6, 7, 8]
+        leftCol   =    [0, 3, 6]
+        midCol    =    [1, 4, 7]
+        rightCol  =    [2, 5, 8]
+        majorDiag =    [0, 4, 8]
+        minorDiag =    [6, 4, 2]
+
+        groups = [
+            topRow,
+            midRow,
+            botRow,
+            leftCol,
+            midCol,
+            rightCol,
+            majorDiag,
+            minorDiag
+        ]
+
+        for group in groups:
+            sum = 0
+            for cell in group:
+                sum = sum + normalizedBoard[cell]
+
+            if sum == 2:
+                for cell in group:
+                    if normalizedBoard[cell] == 0:
+                        return cell
+
+        return -1
+
+    def printBoard(self):
+        print()
+        print(self.board[0]+'|'+self.board[1]+'|'+self.board[2])
+        print('- - -')
+        print(self.board[3]+'|'+self.board[4]+'|'+self.board[5])
+        print('- - -')
+        print(self.board[6]+'|'+self.board[7]+'|'+self.board[8])
+        print()
 
 if __name__ == '__main__':
 
-    rootController = RootController()
-    # rootController.sendRequest('getOs')
-    manager = BluetoothDeviceManager(adapter_name = 'hci0')
-    manager.start_discovery(service_uuids=[root_identifier_uuid])
-    thread = threading.Thread(target=manager.run)
-    thread.start()
+    # rootController = RootController()
+    # # rootController.sendRequest('getOs')
+    # manager = BluetoothDeviceManager(adapter_name = 'hci0')
+    # manager.start_discovery(service_uuids=[root_identifier_uuid])
+    # thread = threading.Thread(target=manager.run)
+    # thread.start()
+    #
+    # currentX = -1
+    # currentY = -1
 
-    currentX = -1
-    currentY = -1
-
-    while manager.robot is None:
-        print('Robot not assigned. Waiting to complete connection.')
-        time.sleep(1)
-    print('Robot assigned and connected')
-    time.sleep(10)
-
-    x = int(input('Type a x-coor.'))
-    y = int(input('Type a y-coor.'))
-    currentX, currentY = manager.robot.goToSquare(x,y,currentX, currentY)
-    time.sleep(2)
-    manager.robot.drawX()
-    time.sleep(10)
-    currentX, currentY = manager.robot.goHome(currentX, currentY)
+    board = Board()
+    board.addO(4)
+    board.addO(8)
+    board.addX(3)
+    board.addX(5)
+    board.printBoard()
+    print('Win: ' + board.checkWin())
+    print('Check for X:' + str(board.checkNextTurnWinforX()))
+    print('Check for O:' + str(board.checkNextTurnWinforO()))
+    #
+    # while manager.robot is None:
+    #     print('Robot not assigned. Waiting to complete connection.')
+    #     time.sleep(1)
+    #
+    # print('Robot assigned and connected')
+    # time.sleep(10)
+    #
+    # x = int(input('Type a x-coor.'))
+    # y = int(input('Type a y-coor.'))
+    # currentX, currentY = manager.robot.goToSquare(x,y,currentX, currentY)
+    # time.sleep(2)
+    # manager.robot.drawX()
+    # time.sleep(10)
+    # currentX, currentY = manager.robot.goHome(currentX, currentY)
     # rospy.spin()
-        
+
+
+
     
