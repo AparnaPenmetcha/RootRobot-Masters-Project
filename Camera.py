@@ -92,6 +92,11 @@ class Camera:
         # print(msg.data)
         if msg.data == 'received':
             self.received = True
+        elif msg.data == 'newGame':
+            print("Received: " + msg.data)
+            self.sendRequest('received')
+            self.camera.capture('old.jpg')
+
         elif msg.data == 'getOs':
             print("Received: " + msg.data)
             self.sendRequest('received')

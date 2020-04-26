@@ -8,6 +8,7 @@ import datetime
 import rospy
 from std_msgs.msg import String
 import numpy as np
+import random
 
 instructions = """---------------------
  KEY         COMMAND
@@ -32,7 +33,7 @@ sensorReading = {
     'batteryLevel': None
 }
 
-robotTouched = False
+robotTouched = FalseS
 
 class BluetoothDeviceManager(gatt.DeviceManager):
     robot = None  # root robot device
@@ -141,6 +142,16 @@ class RootDevice(gatt.Device):
              0x00, 0x00])
         time.sleep(2)
 
+    def speak(self, string):
+        packet = [0x05, 0x04, 0x00]
+        stringUTF = [c.encode(encoding='UTF-8',errors='replace') for c in string]
+        packet = packet + stringUTF
+        for i in range(20-len(packet)):
+            packet.append(0x00)
+
+        self.tx_characteristic.write_value(packet)
+        time.sleep(2)
+
     def rotate_right(self, angle):
         angle = angle * 10
         angleBytes = angle.to_bytes(4, byteorder='big', signed=True)
@@ -243,22 +254,40 @@ class RootDevice(gatt.Device):
     def drawX(self):
 
         self.rotate_right(45)
-        self.drive_distance(50)
+        self.drive_distance(75)
         self.rotate_right(180)
         self.pen_down()
-        self.drive_distance(100)
+        self.drive_distance(150)
         self.pen_up()
         self.rotate_right(180)
-        self.drive_distance(50)
+        self.drive_distance(75)
         self.rotate_right(90)
-        self.drive_distance(50)
+        self.drive_distance(75)
         self.rotate_right(180)
         self.pen_down()
-        self.drive_distance(100)
+        self.drive_distance(150)
         self.pen_up()
         self.rotate_right(180)
-        self.drive_distance(50)
+        self.drive_distance(75)
         self.rotate_right(225)
+
+    def celebrate(self):
+        self.set_colour(2,255,255,255)
+        self.rotate_right(360)
+        # self.set_colour(2,255,255,255)
+        self.rotate_right(360)
+        # self.set_colour(2,255,255,255)
+        self.rotate_right(360)
+        # self.set_colour(2,255,255,255)
+        self.rotate_right(360)
+
+        self.speak('I won loser')
+
+    def congratulate(self):
+        self.set_colour(2, 255, 255, 255)
+        self.rotate_right(360)
+
+        self.speak('Congratulations!')
 
 class RootController:
 
@@ -267,6 +296,7 @@ class RootController:
         rospy.Subscriber('toRoot', String, self.root_callback)
         self.pub = rospy.Publisher('fromRoot', String, queue_size=10)
         self.received = False
+        self.lastOLocation = -1
 
     def sendRequest(self, message):
 
@@ -299,18 +329,27 @@ class RootController:
         if msg.data == 'received':
             self.received = True
         else:
-            print("Received: " + msg.data)
-            self.sendRequest('received')
+            try:
+                self.lastOLocation = int(msg.data)
+                print("Received Last O Location: " + msg.data)
+                self.sendRequest('received')
+            except:
+                print("Received: " + msg.data)
+                self.sendRequest('received')
+
+
 
 class Board:
     def __init__(self):
         self.board = ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N']
+        self.turns = 0
 
     def addX(self, position):
         self.board[position] = 'X'
+        self.turns = self.turns + 1
     def addO(self, position):
         self.board[position] = 'O'
-
+        self.turns = self.turns + 1
 
     def checkWin(self):
         normalizedBoard = []
@@ -438,6 +477,17 @@ class Board:
 
         return -1
 
+    def getRandomEmpty(self):
+        empties = []
+        for i, cell in enumerate(self.board):
+            if cell == 'N':
+                empties.append(i)
+
+        seed = random.randint(0, len(empties)-1)
+        return empties[seed]
+
+
+
     def printBoard(self):
         print()
         print(self.board[0]+'|'+self.board[1]+'|'+self.board[2])
@@ -449,33 +499,30 @@ class Board:
 
 if __name__ == '__main__':
 
-    # rootController = RootController()
-    # # rootController.sendRequest('getOs')
-    # manager = BluetoothDeviceManager(adapter_name = 'hci0')
-    # manager.start_discovery(service_uuids=[root_identifier_uuid])
-    # thread = threading.Thread(target=manager.run)
-    # thread.start()
-    #
-    # currentX = -1
-    # currentY = -1
+    rootController = RootController()
+    manager = BluetoothDeviceManager(adapter_name = 'hci0')
+    manager.start_discovery(service_uuids=[root_identifier_uuid])
+    thread = threading.Thread(target=manager.run)
+    thread.start()
+
+    currentX = -1
+    currentY = -1
 
     board = Board()
     board.addO(4)
     board.addO(8)
     board.addX(3)
     board.addX(5)
-    board.printBoard()
-    print('Win: ' + board.checkWin())
-    print('Check for X:' + str(board.checkNextTurnWinforX()))
-    print('Check for O:' + str(board.checkNextTurnWinforO()))
-    #
-    # while manager.robot is None:
-    #     print('Robot not assigned. Waiting to complete connection.')
-    #     time.sleep(1)
-    #
-    # print('Robot assigned and connected')
-    # time.sleep(10)
-    #
+
+
+
+    while manager.robot is None:
+        print('Robot not assigned. Waiting to complete connection.')
+        time.sleep(1)
+
+    print('Robot assigned and connected')
+    time.sleep(10)
+
     # x = int(input('Type a x-coor.'))
     # y = int(input('Type a y-coor.'))
     # currentX, currentY = manager.robot.goToSquare(x,y,currentX, currentY)
@@ -485,6 +532,63 @@ if __name__ == '__main__':
     # currentX, currentY = manager.robot.goHome(currentX, currentY)
     # rospy.spin()
 
+    rootController.sendRequest('newGame')
+    while board.turns < 9 and board.checkWin() == 'N':
+
+        while not robotTouched:
+            time.sleep(1)
+
+        robotTouched = False
+        print("User touched robot sensor. Requesting O location from camera...")
+
+        lastOLocation = rootController.lastOLocation
+
+        while lastOLocation == rootController.lastOLocation:
+            time.sleep(1)
+
+        board.addO(rootController.lastOLocation)
+
+        if board.checkWin() != 'N':
+            break
+        elif board.checkNextTurnWinforX() > -1:
+            winningSquare = board.checkNextTurnWinforX()
+            winningX = winningSquare % 3
+            winningY = winningSquare // 3
+
+            currentX, currentY = manager.robot.goToSquare(winningX, winningY, currentX, currentY)
+            time.sleep(2)
+            manager.robot.drawX()
+            board.addX(winningSquare)
+            time.sleep(2)
+            currentX, currentY = manager.robot.goHome(currentX, currentY)
 
 
-    
+        elif board.checkNextTurnWinforO() > -1:
+            blockingSquare = board.checkNextTurnWinforO()
+            blockingX = blockingSquare % 3
+            blockingY = blockingSquare // 3
+
+            currentX, currentY = manager.robot.goToSquare(blockingX, blockingY, currentX, currentY)
+            time.sleep(2)
+            manager.robot.drawX()
+            board.addX(blockingSquare)
+            time.sleep(2)
+            currentX, currentY = manager.robot.goHome(currentX, currentY)
+
+        else:
+            randomSquare = board.getRandomEmpty()
+            randomX = randomSquare % 3
+            randomY = randomSquare // 3
+
+            currentX, currentY = manager.robot.goToSquare(randomX, randomY, currentX, currentY)
+            time.sleep(2)
+            manager.robot.drawX()
+            board.addX(randomSquare)
+            time.sleep(2)
+            currentX, currentY = manager.robot.goHome(currentX, currentY)
+
+    if board.checkWin() == 'O':
+        manager.robot.congratulate()
+    elif board.checkWin() == 'X':
+        manager.robot.celebrate()
+
