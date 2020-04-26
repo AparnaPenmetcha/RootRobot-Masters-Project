@@ -51,6 +51,12 @@ class BluetoothDeviceManager(gatt.DeviceManager):
 
 
 class RootDevice(gatt.Device):
+
+    def __init__(self):
+        super().__init__()
+        self.x = -1
+        self.y = -1
+
     def connect_succeeded(self):
         super().connect_succeeded()
         print("[%s] Connected" % (self.mac_address))
@@ -195,7 +201,44 @@ class RootDevice(gatt.Device):
         self.tx_characteristic.write_value(
             [0x0E, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
              0x00, 0x0])
+    
+    def goToSquare(self, x, y):
+        if x > 2 or x < 0 or y > 2 or y < 0:
+            return
 
+        if self.x != -1:
+            self.goHome()
+        else:
+            if x == 0:
+                self.rotate_right(90)
+                self.drive_distance(200)
+                self.rotate_right(-90)
+            if x == 2:
+                self.rotate_right(-90)
+                self.drive_distance(200)
+                self.rotate_right(90)
+
+            self.drive_distance((y+1)*200)
+            self.x = x
+            self.y = y
+    
+    def goHome(self):
+
+        if self.x == -1:
+            pass
+        else:
+            if self.x == 0:
+                self.rotate_right(-90)
+                self.drive_distance(200)
+                self.rotate_right(-90)
+            if self.y == 2:
+                self.rotate_right(90)
+                self.drive_distance(200)
+                self.rotate_right(90)
+
+            self.drive_distance((self.y + 1) * 200)
+            self.x = -1
+            self.y = -1
 
 class RootController:
     
@@ -364,8 +407,11 @@ if __name__ == '__main__':
         pass
     time.sleep(10)
 
-    c = int(input('Type a distance.'))
-    manager.robot.drive_distance(c)
+    x = int(input('Type a x-coor.'))
+    y = int(input('Type a y-coor.'))
+    manager.robot.goToSquare(x,y)
+    time.sleep(10)
+    manager.robot.goHome()
     # rospy.spin()
         
     
