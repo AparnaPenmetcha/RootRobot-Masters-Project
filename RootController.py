@@ -241,6 +241,8 @@ class RootDevice(gatt.Device):
                 self.rotate_right(90)
                 self.drive_distance(200)
                 self.rotate_right(90)
+            if currentX == 1:
+                self.rotate_right(180)
 
             self.drive_distance((currentY + 1) * 200)
             currentX = -1
