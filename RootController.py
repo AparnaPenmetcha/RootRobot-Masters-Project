@@ -317,7 +317,6 @@ class RootController:
         else:
             print("Sending: " + message)
             while not rospy.is_shutdown():
-                rospy.loginfo('%s(%.2f) %s' % (rospy.get_name(),rospy.get_time(),message))
                 msg.data = message
                 self.pub.publish(msg)
                 rate.sleep()
@@ -509,11 +508,6 @@ if __name__ == '__main__':
     currentY = -1
 
     board = Board()
-    board.addO(4)
-    board.addO(8)
-    board.addX(3)
-    board.addX(5)
-
 
 
     while manager.robot is None:

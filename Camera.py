@@ -106,7 +106,7 @@ class Camera:
             # self.camera.stop_preview()
 
             x = 85
-            y = 40
+            y = 0
             h = 1000
             w = 1000
 
