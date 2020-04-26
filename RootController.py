@@ -540,6 +540,7 @@ if __name__ == '__main__':
 
         robotTouched = False
         print("User touched robot sensor. Requesting O location from camera...")
+        rootController.sendRequest('getOs')
 
         lastOLocation = rootController.lastOLocation
 
