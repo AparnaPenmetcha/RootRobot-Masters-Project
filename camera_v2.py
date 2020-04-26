@@ -258,7 +258,7 @@ def callback(data):
 
 
             oldLocations = []
-            for i, cell in board.board:
+            for i, cell in enumerate(board.board):
                 if cell == 'O':
                     oldLocations.append(i)
 
