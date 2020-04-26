@@ -318,11 +318,13 @@ class RootController:
                     return
         else:
             print("Sending: " + message)
+            n = 0
             while not rospy.is_shutdown():
                 msg.data = message
                 self.pub.publish(msg)
                 rate.sleep()
-                if self.received:
+                n = n + 1
+                if self.received or n > 60:
                     self.received = False
                     return
 
