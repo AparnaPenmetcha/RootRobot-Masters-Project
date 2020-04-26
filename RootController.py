@@ -521,6 +521,18 @@ if __name__ == '__main__':
     print('Robot assigned and connected')
     time.sleep(10)
 
+
+    oLocations = input('Type in locations of Os').split(',')
+    xLocations = input('Type in locations of Xs').split(',')
+    for oLoc in oLocations:
+        loc = int(oLoc)
+        board.addO(loc)
+    for xLoc in xLocations:
+        loc = int(xLoc)
+        board.addX(loc)
+
+    board.printBoard()
+
     # x = int(input('Type a x-coor.'))
     # y = int(input('Type a y-coor.'))
     # currentX, currentY = manager.robot.goToSquare(x,y,currentX, currentY)
