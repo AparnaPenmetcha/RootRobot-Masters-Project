@@ -271,7 +271,8 @@ class RootDevice(gatt.Device):
         self.pen_up()
         self.rotate_right(180)
         self.drive_distance(75)
-        self.rotate_right(225)
+        self.rotate_right(45)
+        self.rotate_right(180)
 
     def celebrate(self):
         self.set_colour(2,255,255,255)
