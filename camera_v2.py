@@ -266,7 +266,7 @@ def callback(data):
             newLocation = -1
             newLoc = input('Type new O.')
             if newLoc != '':
-                newLocation = input(newLoc)
+                newLocation = int(newLoc)
                 board.addO(newLocation)
 
 
