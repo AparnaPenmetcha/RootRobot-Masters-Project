@@ -364,8 +364,8 @@ if __name__ == '__main__':
         pass
     time.sleep(5)
 
-    c = input('Type a command.')
-    drive_root(c)
+    c = int(input('Type a distance.'))
+    manager.robot.drive_distance(c)
     # rospy.spin()
         
     
