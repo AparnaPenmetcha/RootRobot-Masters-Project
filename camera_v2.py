@@ -233,6 +233,8 @@ def getOLocation(im):
     return locations
 
 def callback(data):
+    print('Received data from Root.')
+
     if 'type' in data.data:
         dic = json.loads(data.data)
         messageType = dic['type']

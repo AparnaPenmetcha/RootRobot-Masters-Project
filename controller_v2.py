@@ -512,6 +512,7 @@ def getOLocation(im):
     return locations
 
 def callback(data):
+    print('Received from camera: '+ data.data)
     if 'type' in data.data:
         dic = json.loads(data.data)
         messageType = dic['type']
