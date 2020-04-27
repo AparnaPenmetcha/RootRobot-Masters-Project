@@ -280,6 +280,7 @@ def callback(data):
                 for loc in newLocations:
                     if loc not in oldLocations:
                         print('{} is a new location'.format(loc))
+                        newLocation = loc
                         board.addO(loc)
 
                 if newLocation == -1:
