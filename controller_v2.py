@@ -579,7 +579,10 @@ if __name__ == '__main__':
 
         currentTurns = board.turns
         while board.turns == currentTurns:
-            time.sleep(1)
+            print('Current Turns: '+str(currentTurns))
+            print('Board Turns: '+str(board.turns))
+            print('Board not updated wait for 5 secs')
+            time.sleep(5)
 
         print('New board received from camera.')
 

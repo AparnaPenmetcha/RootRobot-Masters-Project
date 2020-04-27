@@ -248,7 +248,6 @@ def callback(data):
             print('Received update request')
             board.printBoard()
 
-            camera.capture('new.jpg')
 
             x = 85
             y = 0
@@ -271,7 +270,7 @@ def callback(data):
 
 
             while newLocation == -1:
-
+                camera.capture('new.jpg')
                 im2 = cv2.imread(r'new.jpg')
                 im2 = im2[y:y + h, x:x + w]
                 im2 = cv2.resize(im2, (600, 600))
