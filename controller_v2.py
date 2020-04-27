@@ -626,6 +626,8 @@ if __name__ == '__main__':
             time.sleep(2)
             currentX, currentY = manager.robot.goHome(currentX, currentY)
 
+
+    manager.robot.drive_distance(400)
     if board.checkWin() == 'O':
         manager.robot.congratulate()
     elif board.checkWin() == 'X':
