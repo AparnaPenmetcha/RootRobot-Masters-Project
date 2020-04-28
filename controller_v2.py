@@ -445,6 +445,13 @@ class Board:
 
         return board
 
+
+
+
+
+
+
+
 # initiate variables
 rospy.init_node('controller', anonymous=True)
 pub = rospy.Publisher('fromRoot', String, queue_size=10)
@@ -468,48 +475,6 @@ while manager.robot is None:
 print('Robot assigned and connected')
 time.sleep(10)
 
-
-def getOLocation(im):
-
-    locations = []
-
-    imgwidth=im.shape[0]
-    imgheight=im.shape[1]
-
-
-    y1 = 0
-    M = imgwidth//3
-    N = imgheight//3
-
-
-    n = 0
-    for x in range(0,imgwidth,M):
-        for y in range(0, imgheight, N):
-            x1 = x + M
-            y1 = y + N
-            tiles = im[x:x+M,y:y+N]
-
-            cv2.rectangle(im, (x, y), (x1, y1), (0, 255, 0))
-            # cv2.imwrite(r'/Users/shaivpatel/Desktop/Apoopoo/tictactoe/after/' +str(x)+ str(y)+"SAMPLE.png",tiles)
-
-            # Read image.
-
-            gray = cv2.cvtColor(tiles, cv2.COLOR_BGR2GRAY)
-
-            gray = cv2.medianBlur(gray, 5)
-
-            rows = gray.shape[0]
-            detected_circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, rows / 8,
-                                      param1=100, param2=30,
-                                      minRadius=1, maxRadius=3000)
-
-            # Draw circles that are detected.
-            if detected_circles is not None:
-                locations.append(n)
-
-            n = n + 1
-    print(locations)
-    return locations
 
 def callback(data):
     global board
