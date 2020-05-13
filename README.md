@@ -8,10 +8,8 @@ Materials:
 
 
 Refer to for getting started: 
-
-Root Robot [Bluetooth Protocol Documentation](https://github.com/RootRobotics/root-robot-ble-protocol#root-robot-bluetooth-low-energy-protocol-documentation) 
-
-Follow the steps on this [page](https://github.com/getsenic/gatt-python) for all the necessary libraries 
+- Root Robot [Bluetooth Protocol Documentation](https://github.com/RootRobotics/root-robot-ble-protocol#root-robot-bluetooth-low-energy-protocol-documentation) 
+- Follow the steps on this [page](https://github.com/getsenic/gatt-python) for all the necessary libraries 
 
 
 
