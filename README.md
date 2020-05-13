@@ -1,5 +1,5 @@
 # RootRobot-Masters-Project
-Tufts Master's Project 
+Tufts University 
 
 Materials:
 - 1 [Root Robot](https://shop.edu.irobot.com/collections/how-to-buy)
