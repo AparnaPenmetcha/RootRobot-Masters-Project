@@ -1,5 +1,8 @@
 # Tufts University Master's Project
 
+[ROS image]{https://drive.google.com/file/d/1JYLld2O6-xr7KMX0xC63cay2cZLKdrsz/view} file for Raspberry Pi flash 
+
+
 Materials:
 - 1 [Root Robot](https://shop.edu.irobot.com/collections/how-to-buy)
 - 2 [Raspberry Pi B or B+ model](https://www.amazon.com/ELEMENT-Element14-Raspberry-Pi-Motherboard/dp/B07P4LSDYV/ref=sr_1_3?dchild=1&keywords=raspberry+pi+b%2B+model&qid=1589396447&sr=8-3)
