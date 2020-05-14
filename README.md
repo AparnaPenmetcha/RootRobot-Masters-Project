@@ -1,6 +1,7 @@
 # Tufts University Master's Project
 
-[ROS image]{https://drive.google.com/file/d/1JYLld2O6-xr7KMX0xC63cay2cZLKdrsz/view} file for Raspberry Pi flash 
+ROS image file for Raspberry Pi flash
+https://drive.google.com/file/d/1JYLld2O6-xr7KMX0xC63cay2cZLKdrsz/view file for Raspberry Pi flash 
 
 
 Materials:
