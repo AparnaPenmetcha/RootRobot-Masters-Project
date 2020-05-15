@@ -4,6 +4,7 @@ ROS image file for Raspberry Pi flash
 https://drive.google.com/file/d/1JYLld2O6-xr7KMX0xC63cay2cZLKdrsz/view  
 
 Run camera_v2.py on the Raspberry Pi with the camera 
+
 Run controller_v2.py on the Raspberry Pi (that will communicate with the Root) 
 
 Materials:
